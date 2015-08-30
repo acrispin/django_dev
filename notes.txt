@@ -219,7 +219,7 @@ ejecutar lo siguiente, para juntar todos los files staticos en STATIC_ROOT
 
 
 
-versionar el proyecto
+VERSIONAR EL PROYECTO EN GIT
 crear el file .gitignore y copiar el contenido de https://github.com/django/django/blob/master/.gitignore
     $ touch .gitignore
 
