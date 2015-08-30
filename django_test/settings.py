@@ -23,7 +23,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '*zcv1@+4oq^_kqdtce+e-qty!z6_576k*3eda0=!-%#v)qx%+o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+DEPLOY_HEROKU = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -82,7 +83,10 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'django_test.wsgi.application'
+if DEPLOY_HEROKU:
+    WSGI_APPLICATION = 'django_test.wsgi.application'
+else:
+    WSGI_APPLICATION = 'django_test.wsgi_dev.application'
 
 
 # Database
@@ -115,9 +119,23 @@ USE_L10N = True
 USE_TZ = True
 
 
+
+
+
+#################################################################################### HEROKU
+if DEPLOY_HEROKU:
+    # Parse database configuration from $DATABASE_URL
+    import dj_database_url
+    DATABASES['default'] =  dj_database_url.config()
+
+    # Honor the 'X-Forwarded-Proto' header for request.is_secure()
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+    # Allow all host headers
+    ALLOWED_HOSTS = ['*']
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = 'staticfiles'
 
@@ -126,11 +144,14 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 
-# STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+if not DEPLOY_HEROKU:
+    # STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+    STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # para poner cache a los js cargados con requirejs
 SYS_VERSION = '1234ABCD'
+
+
 
 
 

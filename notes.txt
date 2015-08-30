@@ -236,6 +236,44 @@ crearse un proyecto en la cuenta de git y obtener la url, ejm: https://github.co
 
 
 
+HEROKU
+instalar el django-toolbelt, antes activar el entorno virtual y ubicarse en el directorio del proyecto
+    $ pip install django-toolbelt
+
+crear el file Procfile en la raiz de la app y adicionar el siguiente texto
+    $ touch Procfile
+    $ echo "web: gunicorn projectname.wsgi --log-file -" >> Procfile
+
+iniciar el proceso con heroku y seguir las instrucciones en https://devcenter.heroku.com/articles/getting-started-with-django#start-a-django-app-inside-a-virtualenv
+    $ heroku local
+
+actualizar el archivo de requirments.txt
+    $ pip freeze > requirements.txt
+
+loguearse a heroku
+    $ heroku login
+
+crear una app en heroku
+    $ heroku create app_name
+
+llevar los cambios a heroku
+    $ git push heroku master
+
+si ya se creo la app en heroku, asociarla al repositorio, app_name es la app creada en heroku
+    $ heroku git:remote -a app_name
+
+otra alternativa para asociarlo
+    $ git remote add heroku https://git.heroku.com/app_name.git
+    $ git remote set-url heroku https://git.heroku.com/app_name.git
+
+subir la app a heroku
+    $ git push heroku master
+
+
+
+
+
+
 
 conectarse a psql con usuario postgres desde terminal
     $ psql -h localhost -p 5432 -U postgres
