@@ -296,6 +296,12 @@ luego de eso probar la url : https://app_name.herokuapp.com
 si se tiene modelos, asociar un addons postgres y ejecutar 
     $ heroku run python manage.py syncdb 
 
+luego abrir la app con el browser
+    $ heroku open
+
+acceder al shell de heroku
+    $ heroku run python manage.py shell
+
 
 !!!! NO OLVIDAR QUE AL DEPLOYAR EN HEROKU SETEAR LOS VALORES DE SETTINGS.PY A:
     DEBUG = False

@@ -32,8 +32,8 @@ SECRET_KEY = '*zcv1@+4oq^_kqdtce+e-qty!z6_576k*3eda0=!-%#v)qx%+o'
     DEBUG = True
     DEPLOY_HEROKU = False
 """
-DEBUG = False
-DEPLOY_HEROKU = True
+DEBUG = True
+DEPLOY_HEROKU = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -156,6 +156,7 @@ STATICFILES_DIRS = (
 # if not DEPLOY_HEROKU:
 #     # STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 #     STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+## https://devcenter.heroku.com/articles/django-assets
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # para poner cache a los js cargados con requirejs
