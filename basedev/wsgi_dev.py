@@ -1,5 +1,5 @@
 """
-WSGI config for django_test project.
+WSGI config for basedev project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -12,7 +12,7 @@ import os
 from django.core.wsgi import get_wsgi_application
 from whitenoise.django import DjangoWhiteNoise
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_test.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "basedev.settings")
 
 application = get_wsgi_application()
 application = DjangoWhiteNoise(application)

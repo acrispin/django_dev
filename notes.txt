@@ -86,10 +86,10 @@ crear el archivo requeriments y hacer freeze de las dependencias de la app, este
 
 
 crear el proyecto
-    $ django-admin.py startproject django_test
+    $ django-admin.py startproject basedev
 
 ir al proyecto creado 
-    $ cd django_test
+    $ cd basedev
 
 crear una app rest
     $ django-admin.py startapp apprest
