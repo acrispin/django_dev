@@ -266,9 +266,19 @@ otra alternativa para asociarlo
     $ git remote add heroku https://git.heroku.com/app_name.git
     $ git remote set-url heroku https://git.heroku.com/app_name.git
 
+agregar los cambios al git
+    $ git add .
+
+comitiar los cambios
+    $ git push -u origin master
+
 subir la app a heroku
     $ git push heroku master
 
+ver los logs
+    $ heroku logs 
+    $ heroku logs -n 500
+    $ heroku logs -t
 
 
 
