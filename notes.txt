@@ -236,7 +236,11 @@ crearse un proyecto en la cuenta de git y obtener la url, ejm: https://github.co
 
 
 
-HEROKU
+
+
+
+=============================================================================================== HEROKU
+
 instalar el django-toolbelt, antes activar el entorno virtual y ubicarse en el directorio del proyecto
     $ pip install django-toolbelt
 
@@ -245,6 +249,7 @@ crear el file Procfile en la raiz de la app y adicionar el siguiente texto
     $ echo "web: gunicorn projectname.wsgi --log-file -" >> Procfile
 
 iniciar el proceso con heroku y seguir las instrucciones en https://devcenter.heroku.com/articles/getting-started-with-django#start-a-django-app-inside-a-virtualenv
+probarlo localmente
     $ heroku local
 
 actualizar el archivo de requirments.txt
@@ -280,6 +285,27 @@ ver los logs
     $ heroku logs -n 500
     $ heroku logs -t
 
+verificar que un dyno este corriendo
+    $ heroku ps
+
+activar un dyno si el comando anterior no produjo salida, por defecto es free
+    $ heroku ps:scale web=1
+
+luego de eso probar la url : https://app_name.herokuapp.com
+
+si se tiene modelos, asociar un addons postgres y ejecutar 
+    $ heroku run python manage.py syncdb 
+
+
+!!!! NO OLVIDAR QUE AL DEPLOYAR EN HEROKU SETEAR LOS VALORES DE SETTINGS.PY A:
+    DEBUG = False
+    DEPLOY_HEROKU = True
+
+!!!! EN DESARROLLO
+    DEBUG = True
+    DEPLOY_HEROKU = False
+
+=============================================================================================== HEROKU
 
 
 

@@ -23,6 +23,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '*zcv1@+4oq^_kqdtce+e-qty!z6_576k*3eda0=!-%#v)qx%+o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+"""
+!!!! NO OLVIDAR QUE AL DEPLOYAR EN HEROKU SETEAR LOS VALORES DE SETTINGS.PY A:
+    DEBUG = False
+    DEPLOY_HEROKU = True
+
+!!!! EN DESARROLLO
+    DEBUG = True
+    DEPLOY_HEROKU = False
+"""
 DEBUG = False
 DEPLOY_HEROKU = True
 
@@ -84,7 +93,7 @@ TEMPLATES = [
 ]
 
 if DEPLOY_HEROKU:
-    WSGI_APPLICATION = 'basedev.wsgi.application'
+    WSGI_APPLICATION = 'basedev.wsgi_prd.application'
 else:
     WSGI_APPLICATION = 'basedev.wsgi_dev.application'
 
@@ -144,15 +153,13 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 
-if not DEPLOY_HEROKU:
-    # STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
-    STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+# if not DEPLOY_HEROKU:
+#     # STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+#     STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # para poner cache a los js cargados con requirejs
 SYS_VERSION = '1234ABCD'
-
-
-
 
 
 ## para deshabilitar el logging
