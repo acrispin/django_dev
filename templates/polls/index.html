@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Index - Polls{% endblock %}
+
+{% block content %}
+    <h1>HOME</h1>
+    {% if latest_question_list %}
+        <ul>
+        {% for question in latest_question_list %}
+            {% comment "Optional note" %}
+                <p>Commented out text with {{ create_date|date:"c" }}</p>
+            {% endcomment %}
+            <!-- <li><a href="/polls/{{ question.id }}/">{{ question.question_text }}</a></li> -->
+            {# <li><a href="/polls/{{ question.id }}/">{{ question.question_text }}</a></li> #}
+            <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No polls are available.</p>
+    {% endif %}
+    <br/>
+    <div>
+        <h3>Main</h3>
+        <ul>
+            <li><a href="{% url 'main:index' %}">Index</a></li>
+            <li><a href="{% url 'main:detail' 1 %}">Detalle</a></li>
+            <li><a href="{% url 'main:results' 2 %}">Result</a></li>
+            <li><a href="{% url 'main:vote' 3 %}">Vote</a></li>
+            <li><a href="{% url 'main:getPdf' %}">PDF</a></li>
+            <li><a href="{% url 'main:getPdfBytes' %}">PDFB</a></li>
+            <li><a href="{% url 'main:html2pdf' %}">Htlm2Pdf</a></li>
+        </ul>
+    </div>  
+    <br/>
+    <div>
+        <h3>Api rest</h3>
+        <ul>
+            <li><a href="{% url 'rest:libro-list' %}">Libros</a></li>
+            <li><a href="{% url 'rest:autor-list' %}">Autor</a></li>
+        </ul>
+    </div>  
+    <br/>
+    <div>
+        <h3>Reportes</h3>
+        <ul>
+            <li><a href="{% url 'polls:line' %}">Line</a></li>
+            <li><a href="{% url 'polls:column' %}">Column</a></li>
+            <li><a href="{% url 'polls:pie' %}">Pie</a></li>
+        </ul>
+    </div>  
+{% endblock %}

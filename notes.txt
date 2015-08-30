@@ -1,0 +1,744 @@
+Configuraciones para el entorno de desarrollo
+
+actualizar la lista de paquetes disponibles
+:~$ sudo apt-get update
+
+instalar python
+:~$ sudo apt-get install python
+
+instalar el manejador de paquetes de python
+:~$ sudo apt-get install python-pip
+:~$ sudo apt-get install python-setuptools
+
+instalar el entorno virtual
+:~$ sudo pip install virtualenv
+
+crear una carpeta para el entorno virtual
+:~$ cd path_to_enviroments/
+:~$ mkdir name_enviroment
+:~$ cd name_enviroment
+
+crear el entorno virtual en la carpeta name_enviroment
+:~$ virtualenv .
+dentro de la carpeta name_enviroment me crear los siguientes directorios (bin,include,lib,local)
+
+activar el entorno virtual creado name_enviroment
+:~$ source bin/activate
+
+aparecera el nombre del entorno virtual entre parentesis
+(name_enviroment)........:~$ 
+
+para desactivarlo
+(name_enviroment)........:~$ deactivate
+
+instalar django dentro del entorno virtual
+(name_enviroment)........:~$ pip install django
+
+verificar si django se instalo correctamente
+(name_enviroment)........:~$ django-admin.py --version
+
+
+
+
+==========================================================================
+
+Proyecto de prueba para pdf, postgres y rest, django 1.8.4
+crear el entorno virtual
+
+instalar django
+    $ pip install django
+
+instalar paquete para pdf
+    $ pip install reportlab
+
+instalar drive para postgres
+    $ pip install psycopg2
+
+instalar django rest
+    $ pip install djangorestframework
+
+instalar paquete para consumis api rest
+    $ pip install requests
+
+instalar simplejson
+    $ pip install simplejson
+
+instalar whitenoise para manejar los archivos estativos en produccion con heroku
+    $ pip install whitenoise
+
+instalar xhtml2pdf para convertir html to pdf
+    $ pip install xhtml2pdf
+
+opcional si falla xhtml2pdf, instalar pisa alternativo a xhtml2pdf, requiere de reportlab 2.7
+    $ easy_install pisa
+
+desintalar un paquete
+    $ pip uninstall reportlab
+
+instalar con una especifica version
+    $ pip install reportlab==2.7
+
+crear el archivo requeriments y hacer freeze de las dependencias de la app, este archivo debe estar en la raiz del proyecto
+    $ pip freeze > requirements.txt
+
+
+
+
+
+crear el proyecto
+    $ django-admin.py startproject django_test
+
+ir al proyecto creado 
+    $ cd django_test
+
+crear una app rest
+    $ django-admin.py startapp apprest
+
+crear la app main
+    $ django-admin.py startapp main
+
+cada vez que se crea un app, registrarla en settings.py
+
+ejecutar la app
+    $ python manage.py runserver 0.0.0.0:8001
+
+para sincronizar la bd
+    $ python manage.py syncdb
+
+para las migraciones, actualizar las tablas de los nuevos modelos agregados o actualizaciones de modelos
+create the migration
+    $ python manage.py makemigrations apprest
+
+commit the migration
+    $ python manage.py migrate
+
+para ver el sql generado de la migracion de los modelos, no lo ejecuta solo para verificarlo
+    $ python manage.py sqlmigrate polls 0001
+
+confirmar los nuevos cambios
+    $ python manage.py migrate
+
+
+
+
+interactuar con el shell de django
+    $ python manage.py shell
+
+importando los modelos a verificar en el shell
+    >>> from polls.models import Question, Choice
+
+consultando datos en el modelo
+    >>> Question.objects.all()
+
+registrando datos
+    >>> from django.utils import timezone
+    >>> q = Question(question_text="What's new?", pub_date=timezone.now())
+
+guardando los datos en la bd
+    >>> q.save()
+
+verificar el id generado
+    >>> q.id
+
+actualizando datos 
+    >>> q.question_text = "Otra pregunta"
+    >>> q.save()
+
+busqueda con filtro
+    >>> Question.objects.filter(id=1)
+    >>> Question.objects.filter(question_text__startswith='What')
+
+filtros con utilitarios
+    >>> from django.utils import timezone
+    >>> current_year = timezone.now().year
+    >>> Question.objects.get(pub_date__year=current_year)
+
+obteniendo un item por id o pk
+    >>> Question.objects.get(id=1)
+    >>> Question.objects.get(pk=1) # si no se el nombre del campo pk
+
+obteniendo por pk y probando metodos definidos
+    >>> q = Question.objects.get(pk=1)
+    >>> q.was_published_recently()
+
+obteniendo el set de respuestas
+    >>> q.choice_set.all()
+
+creando respuestas
+    >>> q.choice_set.create(choice_text='Not much', votes=0)
+    >>> q.choice_set.create(choice_text='The sky', votes=0)
+    >>> r = q.choice_set.create(choice_text='Just hacking again', votes=0)
+
+de una respuesta creada obtener su padre o pregunta
+    >>> c.question
+
+verificar las respuestas creadas y contarlas
+    >>> q.choice_set.all()
+    >>> q.choice_set.count()
+
+buscar las respuestas por el actual año
+    >>> Choice.objects.filter(question__pub_date__year=current_year)
+
+eliminar una respuesta
+    >>> r1 = q.choice_set.filter(choice_text__startswith='Just hacking')
+    >>> r1.delete()
+
+
+
+
+administrando el superadmin
+creando un superuser
+    $ python manage.py createsuperuser
+ejemplo
+    Username: admin
+    Email address: admin@example.com
+
+levantar la app e ir en el browser a ejm:  http://127.0.0.1:8000/admin/ y loguearse con las credenciales seteadas
+    $ python manage.py runserver
+
+hacer una app editable desde el admin
+editar nameapp/admin.py ejm: polls/admin.py y registrar el modelo a editar desde el admin
+    from django.contrib import admin
+    from .models import Question
+
+    admin.site.register(Question)
+
+
+
+
+cuando se descarga o se hace clon de la app ya creada
+crear el entorno virtual para la app y activarlo
+ir a carpeta de la app y ejecutar el siguiente comando para instalar las dependencias
+    $ pip install -r requirements.txt
+
+
+
+cada vez que se haga cambios en los files staticos y se ponga DEBUG = False para pasar a produccion
+ejecutar lo siguiente, para juntar todos los files staticos en STATIC_ROOT
+    $ python manage.py collectstatic
+
+
+
+versionar el proyecto
+crear el file .gitignore y copiar el contenido de https://github.com/django/django/blob/master/.gitignore
+    $ touch .gitignore
+
+crear el file readme en la raiz del proyecto y adicionarle un texto
+    $ touch README.md
+    $ echo "# django_dev" >> README.md
+
+crearse un proyecto en la cuenta de git y obtener la url, ejm: https://github.com/user/projectname.git
+    $ git init
+    $ git add .
+    $ git commit -m "first commit"
+    $ git remote add origin https://github.com/user/projectname.git
+    $ git push -u origin master
+
+
+
+
+conectarse a psql con usuario postgres desde terminal
+    $ psql -h localhost -p 5432 -U postgres
+solicitando passwd
+    $ psql -h localhost -p 5432 -U postgres -W
+
+
+
+
+para corregir el problema DEBUG = True y deployarlo en heroku con DEBUG = False
+https://devcenter.heroku.com/articles/django-assets
+
+adicionar un customtag y acceder a variables globales desde los templates
+http://stackoverflow.com/questions/433162/can-i-access-constants-in-settings-py-from-templates-in-django
+http://stackoverflow.com/a/7716141
+https://docs.djangoproject.com/en/1.8/howto/custom-template-tags/
+
+
+
+
+UTILITARIOS
+
+(1)
+para convertir html a pdf: http://wkhtmltopdf.org/
+descargar el paquete .deb de la pagina
+
+al instalar el paquete me pidio esta dependencia
+    $ sudo apt-get install xfonts-75dpi
+
+instalar el paquete descargado
+    $ sudo dpkg -i wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
+
+usar el path "/usr/local/bin/wkhtmltopdf" como no reconoce el comando wkhtmltopdf
+los siguientes comandos me generan un pdf en la ubicacion que esta el terminal: pwd
+    $ /usr/local/bin/wkhtmltopdf http://google.com google.pdf
+    $ /usr/local/bin/wkhtmltopdf http://depor.pe depor.pdf
+
+usar wkhtmltopdf con python, wrapper hecho en python
+https://pypi.python.org/pypi/wkhtmltopdf/0.1
+
+wkhtmltopdf con django
+https://pypi.python.org/pypi/django-wkhtmltopdf
+http://django-wkhtmltopdf.readthedocs.org/en/latest/
+http://stackoverflow.com/questions/18232691/creating-pdfs-with-django-wkhtmltopdf
+
+
+
+
+
+
+
+
+
+OLD
+==========================================================================
+
+activar el entorno virtual
+:~$ source django/bin/activate
+
+ir al directorio django
+:~$ cd django/
+
+crear la carpeta projects
+:~/django$ mkdir projects
+
+listar las carpetas
+:~/django$ ls
+
+ir a la carpeta creada
+:~/django$ cd projects/
+
+comando django para crear el proyecto
+:~/django/projects$ django-admin.py startproject first_project
+
+#
+comando para crear un projecto django en un directorio existente
+:~/django/projects/first_project$ django-admin.py startproject first_project /home/karnak/django/projects/first_project
+#
+
+verificar el proyecto creado
+:~/django/projects$ ls
+
+ir al proyecto creado
+:~/django/projects$ cd first_project/
+
+ejecutar el proyecto
+:~/django/projects/first_project$ python manage.py runserver
+
+ejecutar el proyecto pasandole un puerto especifico y exponiendo todas la ips publicas del ordenador, sirve para entrar desde la maquina host de la virtual que esta alojada al app
+:~/django/projects/first_project$ python manage.py runserver 0.0.0.0:8001
+
+para crear las tablas de la bd segun los modelos que se tenga implementado que se usa por defecto en el proyecto (sqlite3)
+:~/django/projects/first_project$ python manage.py syncdb
+
+para crear una aplicacion "question_answers" dentro del proyecto
+:~/django/projects/first_project$ python manage.py startapp question_answers
+
+#
+comando para crear una app con un directorio existente
+:~/django/projects/dkads_app$ python manage.py startapp sales /home/karnak/django/projects/dkads_app/modules/apps/sales
+#
+
+para cada app creada que sera usada en el proyecto se nesecita indicar al proyecto sobre esa app, esto se hace registrando la app creada en el archivo
+settings.py del proyecto y en la tupla "INSTALLED_APPS" que esta dentro del archivo ahi se registra la nueva app creada
+en el caso que dicha app tenga modelos se debe actualizar los modelos con la bd, crear las tablas de los nuevos modelos registrados
+:~/django/projects/first_project$ python manage.py syncdb
+
+para ver que sql uso django para crear las tablas de una app en particular
+:~/django/projects/first_project$ python manage.py sql question_answers
+
+para poder iniciar el shell o consola python y manipular los objetos
+:~/django/projects/first_project$ python manage.py shell
+
+importar los modelos para testear
+>>> from question_answers.models import Pregunta,Respuesta
+consultar todos los datos de Pregunta
+>>> Pregunta.objects.all()
+modulo util de django para manipular fechas
+>>> from django.utils import timezone
+crear una instancia de Pregunta
+>>> p = Pregunta(asunto="Quien es tu escritor favorito", descripcion="", fecha_publicacion=timezone.now())
+para guardar los cambios en la bd o persistirlo
+>>> p.save()
+para acceder a las propiedades del objeto
+>>> p.id
+>>> p.asunto
+>>> p.id, p.asunto
+para recuperar el objeto segun su pk
+>>> p = Pregunta.objects.get(pk=1)
+para recuperar todas las respuestas de la pregunta
+>>> p.respuesta_set.all()
+para crear respuestas asociadas a la pregunta
+>>> p.respuesta_set.create(contenido="Mario Vargas LLosa")
+>>> p.respuesta_set.create(contenido="Jorge Luis Borges")
+>>> p.respuesta_set.create(contenido="Gabriel Garcia Marquez")
+para filtrar una respuesta segun su contenido
+>>> Respuesta.objects.filter(contenido="Mario Vargas LLosa")
+otro tipo de filtro como un like
+>>> Respuesta.objects.filter(contenido__contains="LLosa")
+para recuperar todas las respuestas que dentro del asunto de la pregunta contengan "escri"
+>>> Respuesta.objects.filter(pregunta__asunto__contains="escri")
+guardar en una variable la lista del resultado del filtro
+>>> resultados = Respuesta.objects.filter(contenido__contains="borges")
+contar cuantos elementos fueron encontrados
+>>> resultados.count()
+eliminar el resultado
+>>> resultados.delete()
+para salir
+>>> exit()
+
+para crear un nuevo super usuario para el sitio de admin de django
+:~/django/projects/first_project$ python manage.py createsuperuser --username=ccrispin --email=ccrispin@gmail.com
+nos va a pedir password
+
+
+extras 
+====================================
+
+instalar MySQL 
+:~$ sudo apt-get update
+:~$ sudo apt-get install mysql-server
+:~$ sudo netstat -tap | grep mysql
+:~$ sudo service mysql restart
+para obtener la ip del host local
+:~$ ifconfig
+editar el archivo "my.cnf" cambiar "bind-address = 127.0.0.1" por "bind-address = 192.168.1.34" una ip segun el host local
+:~$ sudo nano /etc/mysql/my.cnf
+:~$ sudo service mysql restart
+
+para verificar si el servicio de mysql esta corriendo 
+metodo 1
+:~$ ps aux | grep mysql
+metodo 2
+:~$ service mysql status
+iniciar el servicio mysql
+:~$ sudo service mysql start
+
+conectarse a mysql
+:~$ mysql -u root -p
+ listar las bds
+ mysql> show databases;
+ asignar privilegios al usuario root o administrador para que acepte conexiones remotas
+ mysql> use mysql;
+ mysql> select User, Host from user;
+ mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'PASSWDSETEADO' WITH GRANT OPTION;
+ mysql> FLUSH PRIVILEGES;
+
+instalar mysql-workbench
+:~$ sudo add-apt-repository ppa:olivier-berten/misc
+:~$ sudo apt-get update
+:~$ sudo apt-get install mysql-workbench
+
+para conectarme a mysql desde otra pc
+C:\Users\Carlos>mysql -u root -pPASSWDSETEADO -h 192.168.1.34  -P 3306
+
+
+fuentes:
+https://help.ubuntu.com/12.04/serverguide/mysql.html
+http://www.youtube.com/watch?v=_6kGLQhryQI
+http://ingmmurillo.blogspot.com/2011/03/como-instalar-mysql-server-en-un.html
+http://www.rackspace.com/knowledge_center/article/installing-mysql-server-on-ubuntu
+http://www.upubuntu.com/2013/10/install-mysql-workbench-607-on.html
+http://www.itworld.com/software/326688/install-mysql-workbench-ubuntu-1210-or-1204
+http://benrobb.com/2007/01/15/howto-remote-root-access-to-mysql/
+
+
+
+
+============================================================================================================================================================================================
+
+
+Proyecto a Heroku
+
+- deployar un proyecto django a heroku
+https://realpython.com/blog/python/migrating-your-django-project-to-heroku/
+https://devcenter.heroku.com/articles/getting-started-with-django
+http://www.marinamele.com/2013/12/how-to-set-django-app-on-heroku-part-i.html
+http://www.marinamele.com/2013/12/how-to-set-django-app-on-heroku-part-ii.html
+http://www.marinamele.com/2014/01/how-to-set-django-app-on-heroku-part-iii.html
+https://amatellanes.wordpress.com/2014/02/25/django-heroku-desplegando-una-aplicacion-django-en-heroku/
+
+
+-- herramienta para hacer logo online
+http://tensaiweb.info/blog/10-herramientas-online-para-crear-tus-logos/
+http://www.onlinelogomaker.com/applet/logomaker/
+
+-- herramienta para generar favicon
+http://www.favicon.cc/
+
+-- herramienta para conseguir iconos, gif, ect
+http://www.codejobs.biz/es/blog/2014/11/24/consigue-los-mejores-iconos-para-tus-proyectos-web-gratis#sthash.1uRRjxzh.dpbs
+https://www.iconfinder.com/
+http://www.flaticon.com/
+http://www.iconsdb.com/custom-color/?search=setting
+
+-- herramienta para verificar el site y google analytics y ips y coordenadas con google maps
+http://www.sitealytics.com/dkadsmode.com
+https://www.youtube.com/watch?v=yyw3AYXfF_w
+http://www.chasms.com/chasms1/howdoi/ping_tracert/ping_tracertW7.htm
+http://www.ip2location.com/demo/68.65.123.234
+http://www.gps-coordinates.net/
+
+-- herramienta para verificar los puertos utilizados en windows
+http://stackoverflow.com/questions/1960750/how-to-find-which-program-is-using-port-80-in-windows
+
+-- herramienta en fb para verificar el site
+https://developers.facebook.com/tools/debug/og/object/
+
+-- instalar ubuntu
+http://www.ubuntu.com/download/desktop/install-ubuntu-desktop
+
+-- videos responsivos
+http://www.bufa.es/css-responsive-youtube-vimeo/
+
+-- como abrir o habilitar un puero en firewall de windows
+http://windows.microsoft.com/es-419/windows/open-port-windows-firewall#1TC=windows-7
+
+-- herramienta para generar script de embed de google maps
+http://www.map-embed.com/
+
+-- embed google maps 
+http://stackoverflow.com/questions/2517736/embed-google-map-into-html-page-based-on-gps-coordinates
+
+-- google maps embed responsive
+http://www.labnol.org/internet/embed-responsive-google-maps/28333/
+
+
+
+
+- comandos
+activar el virtualenv, ubicarse en el directorio virtual de django creado
+$ source bin/activate
+
+- se asume que se tiene una app django ya funcionando y que se va a migrar a heroku
+
+- creaer el file "Procfile", el cual sirve para ejecutar comandos al arrancar la app, este archivo debe estar en la raiz del proyecto
+$ touch Procfile
+
+- se agrega la siguiente linea al archivo creado
+web: python manage.py runserver 0.0.0.0:$PORT --noreload
+
+- instalar django-toolbelt
+$ pip install django-toolbelt
+
+- crear el archivo requeriments y hacer freeze de las dependencias de la app, este archivo debe estar en la raiz del proyecto
+$ pip freeze > requirements.txt
+
+- actualizar el archivo "wsgi.py" a:
+from django.core.wsgi import get_wsgi_application
+from dj_static import Cling
+application = Cling(get_wsgi_application())
+
+- para testear heroku localmente
+$ foreman start
+
+- crear la app en heroku
+$ heroku create app_name
+
+- subir la app a heroku, esto se hace luego que se hizo pull y/o push de la app normalmente y testeado
+$ git push heroku master
+
+
+---- Extra
+luego de subir el proyecto a heroku me sucedio un error que lo pude solucionar con info de esta url:
+http://stackoverflow.com/questions/22998190/push-rejected-failed-to-compile-python-app
+
+lo que se tenia que hacer era cambiar una dependencia en el archivo "requirements.txt"
+cambie esta linea "distribute==0.6.24" por esta "setuptools==0.7.3"
+hice de nuevo push a heroku y se soluciono
+
+
+dependencias del proyecto que esta en el archivo "requirements.txt":
+Django==1.6.3
+argparse==1.2.1
+setuptools==0.7.3
+dj-database-url==0.3.0
+dj-static==0.0.6
+django-toolbelt==0.0.1
+gunicorn==19.1.1
+psycopg2==2.5.4
+static3==0.5.1
+wsgiref==0.1.2
+
+
+
+
+-- en windows con virtualenv falla la ejecucion de django-admin.py, ejem
+(name_virtual) -->django-admin.py --version
+-- para solucionar esto se tiene q especificar la ruta del entorno virtual
+(name_virtual) -->python path_to_name_virtual\django-admin.py --version
+ejm
+(dkads_env) F:\Proyectos\dkads_app>python F:\VirtualEnv\dkads_env\Scripts\django-admin.py --version
+
+http://stackoverflow.com/questions/13281771/no-module-named-django-core-when-creating-project-in-virtualenv
+
+crear un proyecto
+(name_virtual) path_to_folder_project>python F:\VirtualEnv\dkads_env\Scripts\django-admin.py startproject project_name
+
+ir al proyecto
+(name_virtual) path_to_folder_project>cd project_name
+
+ejecutar el proyecto
+(name_virtual) path_to_project_name>python manage.py runserver
+
+ejecutar el proyecto especificando puerto y exponer todas las ips publicas del servidor
+(name_virtual) path_to_project_name>python manage.py runserver 0.0.0.0:8001
+
+
+
+-- para actualizar la app, hacer push en heroku en otra pc, ejm windows
+http://stackoverflow.com/questions/18406721/heroku-does-not-appear-to-be-a-git-repository
+https://devcenter.heroku.com/articles/git
+-- instalar heroku toolbelt
+https://toolbelt.heroku.com/
+-- activar el entorno virtual o crearlo, detallado en idtaxi_dev
+-- ir al directorio del proyecto y asociar heroku
+(dkads_env) --\dkads_app>heroku git:remote -a dkadsmode
+-- te pide credenciales, email(antonio_crispin@hotmail.com) y passwd
+-- agrega el remote heroku, luego hacer el push
+(dkads_env) --\dkads_app>git push heroku master
+
+
+
+-- referencia del proyecto
+http://templates.websitetemplatesonline.com/Bootstrap-Free-Template/index.html
+
+
+-- url utiles django
+https://www.youtube.com/watch?v=Ts-IR8Awo8w&index=9&list=PLEtcGQaT56cg3A3r-TNoc-PyVeOuAMB4x
+https://www.youtube.com/watch?v=OH2k1KPj1zk&index=6&list=PLEtcGQaT56cg3A3r-TNoc-PyVeOuAMB4x
+https://docs.djangoproject.com/en/1.6/topics/templates/#template-inheritance
+https://docs.djangoproject.com/en/1.6/ref/templates/builtins/#include
+http://www.woothemes.com/flexslider/
+http://devsmash.com/projects/kwicks/2.2.x/examples/responsive
+
+
+
+-- al poner en settings "DEBUG = False" en settings.py, al ejecutar la aplicacion me sale error:
+"You must set settings.ALLOWED_HOSTS if DEBUG is False."
+
+-- para solicionarlo tuve que setear la variable en settings.py de la sigiuente manera:
+ALLOWED_HOSTS = ['*']
+
+http://stackoverflow.com/questions/24857158/commanderror-you-must-set-settings-allowed-hosts-if-debug-is-false
+
+
+
+
+
+
+-- python
+
+
+# ejemplos para usar router
+# For example, given this URLconf in “string” notation:
+
+from django.conf.urls import patterns, url
+
+urlpatterns = patterns('',
+    url(r'^archive/$', 'mysite.views.archive'),
+    url(r'^about/$', 'mysite.views.about'),
+    url(r'^contact/$', 'mysite.views.contact'),
+)
+
+
+
+# You can accomplish the same thing by passing objects rather than strings. Just be sure to import the objects:
+
+from django.conf.urls import patterns, url
+from mysite.views import archive, about, contact
+
+urlpatterns = patterns('',
+    url(r'^archive/$', archive),
+    url(r'^about/$', about),
+    url(r'^contact/$', contact),
+)
+
+
+
+# The following example is functionally identical. It’s just a bit more compact because it imports the module that contains the views, rather than importing each view individually:
+
+from django.conf.urls import patterns, url
+from mysite import views
+
+urlpatterns = patterns('',
+    url(r'^archive/$', views.archive),
+    url(r'^about/$', views.about),
+    url(r'^contact/$', views.contact),
+)
+
+
+
+# Including other URLconfs
+# At any point, your urlpatterns can “include” other URLconf modules. This essentially “roots” a set of URLs below other ones.
+# For example, here’s an excerpt of the URLconf for the Django Web site itself. It includes a number of other URLconfs:
+
+from django.conf.urls import include, patterns, url
+
+urlpatterns = patterns('',
+    # ... snip ...
+    url(r'^comments/', include('django.contrib.comments.urls')),
+    url(r'^community/', include('django_website.aggregator.urls')),
+    url(r'^contact/', include('django_website.contact.urls')),
+    # ... snip ...
+)
+
+
+# Note that the regular expressions in this example don’t have a $ (end-of-string match character) but do include a trailing slash. 
+# Whenever Django encounters include() (django.conf.urls.include()), it chops off whatever part of the URL matched up to that point 
+# and sends the remaining string to the included URLconf for further processing.
+# Another possibility is to include additional URL patterns by using a list of url() instances. For example, consider this URLconf:
+
+
+from django.conf.urls import include, patterns, url
+
+extra_patterns = patterns('',
+    url(r'^reports/(?P<id>\d+)/$', 'credit.views.report'),
+    url(r'^charge/$', 'credit.views.charge'),
+)
+
+urlpatterns = patterns('',
+    url(r'^$', 'apps.main.views.homepage'),
+    url(r'^help/', include('apps.help.urls')),
+    url(r'^credit/', include(extra_patterns)),
+)
+
+# In this example, the /credit/reports/ URL will be handled by the credit.views.report() Django view.
+
+
+
+# Specifying defaults for view arguments
+# A convenient trick is to specify default parameters for your views’ arguments. Here’s an example URLconf and view:
+
+# URLconf
+from django.conf.urls import url
+
+from . import views
+
+urlpatterns = [
+    url(r'^blog/$', views.page),
+    url(r'^blog/page(?P<num>[0-9]+)/$', views.page),
+]
+
+# View (in blog/views.py)
+def page(request, num="1"):
+    # Output the appropriate page of blog entries, according to num.
+    ...
+    
+    
+    
+
+# A simple view
+
+from django.http import HttpResponse
+import datetime
+
+def current_datetime(request):
+    now = datetime.datetime.now()
+    html = "<html><body>It is now %s.</body></html>" % now
+    return HttpResponse(html)
+    
+    
+    
+    
+    
+    

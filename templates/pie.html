@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Pie Report{% endblock %}
+
+{% load staticfiles %}
+
+{% block content %}
+    <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+{% endblock %}
+
+{% block scriptbody %}
+    <script src="{% static 'js/libs/highcharts.js' %}"></script>
+    <script src="{% static 'js/libs/exporting.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#container').highcharts({
+                chart: {
+                    type: 'pie'
+                },
+                title: {
+                    text: 'Browser market shares January, 2015 to May, 2015'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true
+                        },
+                        showInLegend: true
+                    }
+                },
+                series: [{
+                    name: "Brands",
+                    colorByPoint: true,
+                    data: [ {
+                        name: "Chrome",
+                        y: 24.03
+                    }, {
+                        name: "Firefox",
+                        y: 10.38
+                    }, {
+                        name: "Safari",
+                        y: 4.77
+                    }]
+                }]
+            });
+        });       
+    </script>
+{% endblock %}
