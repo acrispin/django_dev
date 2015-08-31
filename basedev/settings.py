@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'apprest',
     'main',
     'polls',
+    'app.raw',
 )
 
 ## descomentar el siguiente bloque para hacer el api rest con autenticacion

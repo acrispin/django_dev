@@ -97,26 +97,55 @@ crear una app rest
 crear la app main
     $ django-admin.py startapp main
 
-cada vez que se crea un app, registrarla en settings.py
+!!! cada vez que se crea un app, registrarla en settings.py
 
 ejecutar la app
     $ python manage.py runserver 0.0.0.0:8001
 
-para sincronizar la bd
-    $ python manage.py syncdb
+!!! para las migraciones, actualizar las tablas de los nuevos modelos agregados o actualizaciones de modelos
 
-para las migraciones, actualizar las tablas de los nuevos modelos agregados o actualizaciones de modelos
-create the migration
+create the migration para una app especifica
     $ python manage.py makemigrations apprest
 
-commit the migration
-    $ python manage.py migrate
+hacer la migracion dando un nombre especifico al archivo de migracion generado
+    $ python manage.py makemigrations --name migration_filename apprest
 
 para ver el sql generado de la migracion de los modelos, no lo ejecuta solo para verificarlo
     $ python manage.py sqlmigrate polls 0001
 
-confirmar los nuevos cambios
+!!! si se desea no confirmar una migracion, solo eliminar el archivo generado por makemigrations
+
+confirmar los nuevos cambios, commit the migration
     $ python manage.py migrate
+
+hacer migracion seleccionando una app
+    $ python manage.py migrate apprest
+
+migracion con fake de initial
+    $ python manage.py migrate apprest --fake-initial
+
+para mostrar las migraciones
+    $ python manage.py showmigrations 
+
+
+
+Performing raw SQL queries y orden en creacion de las apps
+
+modelos y manejo de datos sin orm. https://docs.djangoproject.com/en/1.8/topics/db/sql/
+creacion de una app dentro de una carpeta creada dentro del proyecto
+en la raiz del proyecto crear una carpeta "apps" y dentro de ella adicionar el file "__init__.py" vacio
+ir a al carpeta creada "apps" y ejecutar lo siguiente para crear la app "raw"
+    $ django-admin.py startapp raw
+
+luego registrar la app creada en "settings.py", ejm
+    INSTALLED_APPS = (
+    ....
+    'apps.raw',
+    ...
+
+volver a la raiz del proyecto y ejucutarlo para verificar que no haya errores
+si la app creada va a manejar vistas, crear un carpeta en templates con el nombre de la app creada
+
 
 
 
@@ -182,6 +211,107 @@ buscar las respuestas por el actual año
 eliminar una respuesta
     >>> r1 = q.choice_set.filter(choice_text__startswith='Just hacking')
     >>> r1.delete()
+
+
+
+
+https://docs.djangoproject.com/en/1.8/topics/db/sql/
+shell para la app "raw" el cual va a manejar queries directamente, no depende del orm
+    >>> from apps.raw.models import Test, Author, Book, Pregunta, Respuesta, RespuestaPregunta, BookAuthor
+
+recuperar de la tabla "polls_test"
+    >>> test = Test.objects.raw('SELECT * FROM polls_test')
+    >>> test[0].iden
+    >>> test[0].name
+pasando parametros
+    >>> name = 'Carlos'
+    >>> tes2 = Test.objects.raw("SELECT * FROM polls_test WHERE fullname = %s", [name])
+
+recuperar de la tabla "apprest_autor"
+    >>> aut = Author.objects.raw('SELECT * FROM apprest_autor')
+    >>> aut[0].id
+    >>> aut[0].nombre
+
+recuperar de la tabla "apprest_libro"
+    >>> book = Book.objects.raw('SELECT id, id AS codigo, nombre AS libro, editorial AS edit, genero AS gene, autor_id AS cod_aut FROM apprest_libro')
+    >>> book[0].id    
+    >>> book[0].codigo 
+    >>> book[0].libro
+
+recuperar de la tabla "polls_question"
+    >>> qs = Pregunta.objects.raw('select id, id AS cod, question_text AS desc, pub_date AS pub from polls_question;')
+    >>> qs[0].cod
+    >>> qs[0].desc
+    >>> qs[0].pub
+
+recuperar de la tabla "polls_choice"
+    >>> rs = Respuesta.objects.raw('select id AS cod, choice_text AS desc, votes AS votos, question_id AS preg_cod FROM polls_choice')
+    >>> rs[0].cod
+    >>> rs[0].desc
+    >>> rs[0].preg_cod
+
+para queries complejos RespuestaPregunta
+    >>> pr = RespuestaPregunta.objects.raw('select choice_text as res, votes as votos, question_text as pre from polls_choice r inner join polls_question p on r.question_id = p.id;')
+    >>> pr[0].res
+    >>> pr[0].votos
+    >>> pr[0].pre
+
+para queries complejos BookAuthor
+    >>> ba = BookAuthor.objects.raw('select l.nombre as libro, l.editorial as edit, l.genero as gen, a.nombre as autor from apprest_libro l right join apprest_autor a on l.autor_id = a.id')
+    >>> ba[0].libro
+    >>> ba[0].edit
+    >>> ba[0].gen
+    >>> ba[0].autor
+
+todos los resultados del raw retorna un RawQuerySet el cual se puede iterar y acceder a el con indices: ba[0]
+pero no tiene propiedades como len para ver cuantos items tiene, para saber cuantos registros se retorno, castearlo a list
+    >>> len(list(ba)) # retorno el numero de elementos obtenidos del query
+otra forma para obtener el numero de elementos un poco mas eficiente
+    >>> sum(1 for result in ba)
+
+las dos formas para contar el result set son ineficientes, evitarlo, otra forma es con cursores
+http://edlab.tc.columbia.edu/index.php?q=node/7260
+http://initd.org/psycopg/docs/cursor.html
+    >>> from django.db import connection
+    >>> cursor = connection.cursor()
+    >>> cursor.execute('SELECT * FROM polls_test')
+    >>> rows = cursor.fetchall()
+    >>> len(rows) # contar cuantas filas retorno
+    >>> cursor.execute("SELECT * FROM polls_test WHERE fullname = %s", ['test']) # pasando params
+    >>> row = cursor.fetchone()
+    >>> cursor.rowcount # retorna cuantas filas produjo el ultimo execute, retorna -1 sino se ha ejecutado nada
+    >>> cursor.query # retorna el ultimo query ejecutado, retorna None sino se ha ejecutado nada
+    >>> cursor.closed # retorna bool si el cursor esta cerrado
+    >>> cursor.connection # retorna el detalle de la coneccion
+    >>> cursor.close()
+
+metodo de python para retornar json en cursores
+...........................................................
+def dictfetchall(cursor):
+    "Returns all rows from a cursor as a dict"
+    desc = cursor.description
+    return [
+        dict(zip([col[0] for col in desc], row))
+        for row in cursor.fetchall()
+    ]
+...........................................................
+    >>> cursor = connection.cursor()
+    >>> cursor.execute('SELECT * FROM polls_test')
+    >>> dictfetchall(cursor)
+
+
+forma correcta de usar los cursores y la coneccion, el cual siempre cierra el cursor
+...........................................................
+with connection.cursor() as c:
+    c.execute(...)
+...........................................................
+
+
+iterar el RawQuerySet
+...........................................................
+>>> for a in Author.objects.raw('SELECT * FROM apprest_autor'):
+...     print(a)
+...........................................................
 
 
 
@@ -362,6 +492,49 @@ http://django-wkhtmltopdf.readthedocs.org/en/latest/
 http://stackoverflow.com/questions/18232691/creating-pdfs-with-django-wkhtmltopdf
 
 
+(2)
+Pendientes a revisar
+http://docs.python-requests.org/en/latest/
+http://stackoverflow.com/questions/30259452/proper-way-to-consume-data-from-restful-api-in-django
+https://ultimatedjango.com/blog/how-to-consume-rest-apis-with-django-python-reques/
+https://docs.djangoproject.com/en/1.8/topics/db/sql/
+http://www.django-rest-framework.org/tutorial/3-class-based-views/
+http://stackoverflow.com/questions/1377446/render-html-to-pdf-in-django-site
+https://docs.djangoproject.com/en/1.8/howto/outputting-pdf/
+https://www.safaribooksonline.com/library/view/Lightweight+Django/9781491946275/ch04.html#CO13-2
+https://www.google.com.pe/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=django%20rest%20framework%20without%20model
+http://stackoverflow.com/questions/13603027/django-rest-framework-non-model-serializer
+http://www.django-rest-framework.org/tutorial/quickstart/
+https://www.google.com.pe/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=api%20rest%20django
+http://notoquesmicodigo.blogspot.com/2014/01/haciendo-una-api-rest-en-20-minutos-con.html
+
+
+(3)
+para limpiar el shell de pytnon
+http://stackoverflow.com/questions/1432480/any-way-to-clear-pythons-idle-window
+    >>> print "\n" * 100
+    >>> def cls(): print "\n" * 100
+    >>> cls()
+o con el os
+    >>> import os
+    >>> os.system('clear') # en linux
+    >>> os.system('CLS') # en windows
+
+
+
+
+PENDIENTES
+http://docs.python-requests.org/en/latest/
+http://stackoverflow.com/questions/30259452/proper-way-to-consume-data-from-restful-api-in-django
+https://ultimatedjango.com/blog/how-to-consume-rest-apis-with-django-python-reques/
+http://www.django-rest-framework.org/tutorial/3-class-based-views/
+http://stackoverflow.com/questions/1377446/render-html-to-pdf-in-django-site
+https://docs.djangoproject.com/en/1.8/howto/outputting-pdf/
+https://www.safaribooksonline.com/library/view/lightweight-django/9781491946275/ch04.html#CO13-2
+https://www.google.com.pe/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=django%20rest%20framework%20without%20model
+http://stackoverflow.com/questions/13603027/django-rest-framework-non-model-serializer
+http://www.django-rest-framework.org/tutorial/quickstart/
+http://notoquesmicodigo.blogspot.com/2014/01/haciendo-una-api-rest-en-20-minutos-con.html
 
 
 
