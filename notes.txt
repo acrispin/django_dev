@@ -129,6 +129,16 @@ para mostrar las migraciones
 
 
 
+!!! moviendo el proyecto en otro server o crear otra db desde cero, de un proyecto que ya tiene migraciones
+clonar el proyecto y activar el entorno virtual si se migra a otro server o ubicacion
+o si se cambia de db, crear la db segun settings.py y ejecutar para crear todas las tablas del proyecto
+    $ python manage.py migrate
+esto lee todas las migraciones de las apps que se hicieron en el proyecto y vuelve a crear las tablas en la nueva db
+crear el superusuario si se usa django-admin
+    $ python manage.py createsuperuser
+
+
+
 Performing raw SQL queries y orden en creacion de las apps
 
 modelos y manejo de datos sin orm. https://docs.djangoproject.com/en/1.8/topics/db/sql/
