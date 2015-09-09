@@ -37,6 +37,20 @@
         <ul>
             <li><a href="{% url 'rest:libro-list' %}">Libros</a></li>
             <li><a href="{% url 'rest:autor-list' %}">Autor</a></li>
+            <li><a href="{% url 'rest:file-list' %}">File</a></li>
+            <li><a href="{% url 'rest2:my_rest_view_1' 2 %}">my_rest_view_1</a></li>
+            <li><a href="{% url 'rest2:my_rest_view_1' 3 %}?format=json&arg1=128&arg2=hola">my_rest_view_1 2</a></li>
+            <li><a href="{% url 'rest2:my_rest_view_1' 70 %}/?format=json&arg1=128&arg2=hola">my_rest_view_1 3</a></li>
+            <li><a href="{% url 'rest2:my_rest_view_2' %}">my_rest_view_2</a></li>
+            <li><a href="{% url 'rest2:my_rest_view_2' %}?code=00198&active=true">my_rest_view_2 params</a></li>
+            <li><a href="{% url 'rest3:my_json_1' n1=5 %}">json_1</a></li>
+            <li><a href="{% url 'rest3:my_json_2' n1=5 n2=2 %}">json_2</a></li>
+            <li><a href="{% url 'rest3:my_json_3' n1=5 n2=2 %}">json_3</a></li>
+            <li><a href="{% url 'rest3:my_json_4' p1=1 p2=2 p3=3 %}">json_4</a></li>
+            <li><a href="{% url 'rest3:my_json_5' m1=1091 m2=2245 m3=09 %}">json_5</a></li>
+            <li><a href="{% url 'rest3:my_json_5' 1091 2245 09 %}">json_5 withou param names</a></li>
+            <li><a href="{% url 'rest4:base_file' %}">Base File</a></li>
+            <li><a href="{% url 'rest4:base_file_pk' 2 %}">Base File PK</a></li>
         </ul>
     </div>  
     <br/>

@@ -493,7 +493,10 @@ http://stackoverflow.com/questions/18232691/creating-pdfs-with-django-wkhtmltopd
 
 
 (2)
-Pendientes a revisar
+fuentes:
+http://www.dabapps.com/blog/api-performance-profiling-django-rest-framework/
+https://realpython.com/blog/python/django-rest-framework-quick-start/
+http://www.genbetadev.com/desarrolloparastartups/como-crear-un-servicio-rest-en-30-lineas-de-codigo-de-django-y-python
 http://docs.python-requests.org/en/latest/
 http://stackoverflow.com/questions/30259452/proper-way-to-consume-data-from-restful-api-in-django
 https://ultimatedjango.com/blog/how-to-consume-rest-apis-with-django-python-reques/

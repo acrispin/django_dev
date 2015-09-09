@@ -130,6 +130,8 @@ USE_TZ = True
 
 
 
+UPLOAD_DIRS = os.path.join(BASE_DIR,  'files')
+
 
 
 #################################################################################### HEROKU
@@ -173,7 +175,7 @@ LOGFILE_NAME = os.path.join(BASE_DIR,  'logs/app.log')
 # This setting will be used by 'RotatingFileHandler'
 # I have kept maxBytes to low value.
 # Just for demonstration purpose.
-LOGFILE_SIZE = 1 * 1024 * 1024
+LOGFILE_SIZE = 100*1024 # 1 * 1024 * 1024 # bytes
 # Log file count
 LOGFILE_COUNT = 10
 

@@ -7,6 +7,7 @@ logs/*.log*
 *.egg-info
 *.pot
 *.py[co]
+*.pdf
 __pycache__
 MANIFEST
 dist/
