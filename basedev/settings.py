@@ -32,8 +32,8 @@ SECRET_KEY = '*zcv1@+4oq^_kqdtce+e-qty!z6_576k*3eda0=!-%#v)qx%+o'
     DEBUG = True
     DEPLOY_HEROKU = False
 """
-DEBUG = True
-DEPLOY_HEROKU = False
+DEBUG = False
+DEPLOY_HEROKU = True
 
 ALLOWED_HOSTS = ['*']
 
