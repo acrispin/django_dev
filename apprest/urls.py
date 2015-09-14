@@ -1,9 +1,13 @@
 from django.conf.urls import patterns, url
 from rest_framework.routers import DefaultRouter
 from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework.authtoken import views
+
 from apprest.viewsets import LibroViewSet, AutorViewSet, FileViewSet
 from apprest.viewapi import RestApiView, RestApiViewJson
 from apprest.viewbase import FileList, FileDetail
+from apprest.views import home, file_collection, file_element, file_collection2, file_collection3, \
+                          file_collection4, file_collection5, file_collection6, file_collection7
 
 """
 {% url 'rest:libro-list' %} --> http://localhost:8001/api/rest/libros/
@@ -58,6 +62,95 @@ urls4 = [
 ]
 
 #urls4 = format_suffix_patterns(urls4) ## ??????????????
+
+
+"""
+{% url 'rest5:api_files' %} --> http://localhost:8000/api/rest/api/v1/files/
+{% url 'rest5:api_file' 2 %} --> http://localhost:8000/api/rest/api/v1/files/2
+"""
+urls5 = [
+    url(r'^$files/home', home),
+    # api
+    url(r'^api/v1/files/$', file_collection, name='api_files'),
+    url(r'^api/v2/files/$', file_collection2, name='api_files_2'),
+    url(r'^api/v3/files/$', file_collection3, name='api_files_3'),
+    url(r'^api/v4/files/$', file_collection4, name='api_files_4'),
+    url(r'^api/v5/files/$', file_collection5, name='api_files_5'),
+    url(r'^api/v6/files/$', file_collection6, name='api_files_6'),
+    url(r'^api/v7/files/$', file_collection7, name='api_files_7'),
+    url(r'^api/v1/files/(?P<pk>[0-9]+)$', file_element, name='api_file')
+]
+
+
+"""
+AUTENTICACION POR TOKEN
+http://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication
+http://stackoverflow.com/questions/20683824/how-can-i-change-existing-token-in-the-authtoken-of-django-rest-framework
+http://stackoverflow.com/questions/14567586/token-authentication-for-restful-api-should-the-token-be-periodically-changed
+http://stackoverflow.com/questions/17560228/how-to-use-tokenauthentication-for-api-in-django-rest-framework
+http://stackoverflow.com/questions/17507206/how-to-make-a-post-simple-json-using-django-rest-framework-csrf-token-missing-o
+https://docs.djangoproject.com/en/1.7/ref/contrib/csrf/#csrf-ajax
+
+## header http para autenticacion por tokens
+    Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
+
+GET
+    GET /api/rest/api/v1/files/ HTTP/1.1
+    Host: localhost:8000
+    Content-Type: application/json
+    Authorization: Token 3eb454bbc5a7fea0ca1882a5131eecec602dbb46
+    Cache-Control: no-cache
+
+POST
+    POST /api/rest/api/v1/files/ HTTP/1.1
+    Host: localhost:8000
+    Content-Type: application/json
+    Authorization: Token 3eb454bbc5a7fea0ca1882a5131eecec602dbb46
+    Cache-Control: no-cache
+
+    {
+        "code": 123,
+        "name": "carlos",
+        "active": true
+    }
+
+OBTENER TOKEN
+    POST /api/rest/get_token/ HTTP/1.1
+    Host: localhost:8000
+    Content-Type: application/json
+    Cache-Control: no-cache
+
+    {
+        "username": "admin",
+        "password": "admin"
+    }
+
+## para crear token para existentes usuarios:
+
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
+
+## crea un nuevo token para cada usuario existente
+for u in User.objects.all():
+    Token.objects.get_or_create(user=u) 
+
+## actualiza el token de todos los usuarios
+for u in User.objects.all():
+    t = Token.objects.get(user=u)
+    t.delete()
+    Token.objects.create(user=u)
+
+## actualiza el token para un usuario especifico
+u = User.objects.get(id=1)
+Token.objects.get(user=u).delete()
+Token.objects.create(user=u)
+
+"""
+urlsToken = [
+    url(r'^get_token/', views.obtain_auth_token, name='token')
+]
+
+
 
 
 """
