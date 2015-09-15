@@ -131,18 +131,24 @@ def file_collection4(request):
 
 @api_view(['GET'])
 def file_collection5(request):
-    global serializer_time
+    global serializer_time 
     global db_time
 
-    db_start = time.time()
+    db_start1 = time.time()
     with connection.cursor() as cursor:
         cursor.execute('SELECT id, pathfile FROM apprest_file')
         data = dictfetchall(cursor)
-    db_time = time.time() - db_start
+    db_time1 = time.time() - db_start1
 
-    serializer_start = time.time()
+    serializer_start1 = time.time()
     json = simplejson.dumps(data)
-    serializer_time = time.time() - serializer_start
+    serializer_time1 = time.time() - serializer_start1
+
+    db_time = db_time1
+    serializer_time = serializer_time1
+
+    logger.debug("Database lookup               | %.6fs" % db_time1)
+    logger.debug("Serialization                 | %.6fs" % serializer_time1)
 
     return HttpResponse(json, content_type='application/json; charset=utf-8')    
 

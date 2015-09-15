@@ -145,6 +145,16 @@ u = User.objects.get(id=1)
 Token.objects.get(user=u).delete()
 Token.objects.create(user=u)
 
+## crear un usuario de django con el shell
+## http://tglei.blogspot.pe/2013/05/django-create-user-using-commandline.html
+    $ python manage.py shell
+    >>> from django.contrib.auth.models import User
+    >>> user = User.objects.create_user('user001', 'user001@gmail.com', '123456') # username, email, passwd
+    >>> user.save() # confirmar los cambios
+    >>> exit() # salir del shell
+
+## luego al llamar al servicio get_token "views.obtain_auth_token" con las credenciales registradas, se crea el token para el usuario
+
 """
 urlsToken = [
     url(r'^get_token/', views.obtain_auth_token, name='token')

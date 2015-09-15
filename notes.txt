@@ -88,6 +88,9 @@ crear el archivo requeriments y hacer freeze de las dependencias de la app, este
 crear el proyecto
     $ django-admin.py startproject basedev
 
+creacion del proyecto con un existente directorio
+    $ django-admin startproject myproject /Users/username/Code/myproject_repo
+
 ir al proyecto creado 
     $ cd basedev
 
