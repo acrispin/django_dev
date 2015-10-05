@@ -537,6 +537,16 @@ o con el os
     >>> os.system('CLS') # en windows
 
 
+(4)    
+exportar pdf en django
+http://assist-software.net/blog/how-create-pdf-files-python-django-application-using-reportlab
+http://stackoverflow.com/questions/1377446/render-html-to-pdf-in-django-site
+https://github.com/nigma/django-easy-pdf
+https://github.com/xhtml2pdf/xhtml2pdf/blob/master/doc/usage.rst
+http://django-easy-pdf.readthedocs.org/en/latest/api.html#module-easy_pdf.rendering
+https://groups.google.com/forum/#!topic/django-users/0MUrSRh6fnQ
+
+
 
 
 PENDIENTES
@@ -620,38 +630,53 @@ para poder iniciar el shell o consola python y manipular los objetos
 
 importar los modelos para testear
 >>> from question_answers.models import Pregunta,Respuesta
+
 consultar todos los datos de Pregunta
 >>> Pregunta.objects.all()
+
 modulo util de django para manipular fechas
 >>> from django.utils import timezone
+
 crear una instancia de Pregunta
 >>> p = Pregunta(asunto="Quien es tu escritor favorito", descripcion="", fecha_publicacion=timezone.now())
+
 para guardar los cambios en la bd o persistirlo
 >>> p.save()
+
 para acceder a las propiedades del objeto
 >>> p.id
 >>> p.asunto
 >>> p.id, p.asunto
+
 para recuperar el objeto segun su pk
 >>> p = Pregunta.objects.get(pk=1)
+
 para recuperar todas las respuestas de la pregunta
 >>> p.respuesta_set.all()
+
 para crear respuestas asociadas a la pregunta
 >>> p.respuesta_set.create(contenido="Mario Vargas LLosa")
 >>> p.respuesta_set.create(contenido="Jorge Luis Borges")
 >>> p.respuesta_set.create(contenido="Gabriel Garcia Marquez")
+
 para filtrar una respuesta segun su contenido
 >>> Respuesta.objects.filter(contenido="Mario Vargas LLosa")
+
 otro tipo de filtro como un like
 >>> Respuesta.objects.filter(contenido__contains="LLosa")
+
 para recuperar todas las respuestas que dentro del asunto de la pregunta contengan "escri"
 >>> Respuesta.objects.filter(pregunta__asunto__contains="escri")
+
 guardar en una variable la lista del resultado del filtro
 >>> resultados = Respuesta.objects.filter(contenido__contains="borges")
+
 contar cuantos elementos fueron encontrados
 >>> resultados.count()
+
 eliminar el resultado
 >>> resultados.delete()
+
 para salir
 >>> exit()
 

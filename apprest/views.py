@@ -20,8 +20,16 @@ logger = logging.getLogger(__name__)
 ## https://realpython.com/blog/python/django-rest-framework-quick-start/
 ## http://www.dabapps.com/blog/api-performance-profiling-django-rest-framework/
 
+global start_time
+global db_time
+global serializer_time
+start_time = 0
+db_time = 0
+serializer_time = 0
+
 def started(sender, **kwargs):    
-    global start_time
+    # global start_time
+    # global db_time
     start_time = time.time()
 
 def finished(sender, **kwargs):
@@ -40,8 +48,8 @@ def home(request):
 
 @api_view(['GET', 'POST'])
 def file_collection(request):
-    global serializer_time
-    global db_time
+    # global serializer_time
+    # global db_time
 
     if request.method == 'GET':
 
@@ -83,8 +91,8 @@ def file_element(request, pk):
 
 @api_view(['GET'])
 def file_collection2(request):
-    global serializer_time
-    global db_time
+    # global serializer_time
+    # global db_time
 
     db_start = time.time()
     data = File.objects.values('id', 'pathfile')
@@ -97,8 +105,8 @@ def file_collection2(request):
 
 @api_view(['GET'])
 def file_collection3(request):
-    global serializer_time
-    global db_time
+    # global serializer_time
+    # global db_time
 
     db_start = time.time()
     items = File.objects.all()
@@ -114,8 +122,8 @@ def file_collection3(request):
 
 @api_view(['GET'])
 def file_collection4(request):
-    global serializer_time
-    global db_time
+    # global serializer_time
+    # global db_time
 
     db_start = time.time()
     items = File.objects.raw('SELECT id, pathfile FROM apprest_file')
@@ -131,8 +139,8 @@ def file_collection4(request):
 
 @api_view(['GET'])
 def file_collection5(request):
-    global serializer_time 
-    global db_time
+    # global serializer_time 
+    # global db_time
 
     db_start1 = time.time()
     with connection.cursor() as cursor:
@@ -154,8 +162,8 @@ def file_collection5(request):
 
 @api_view(['GET'])
 def file_collection6(request):
-    global serializer_time
-    global db_time
+    # global serializer_time
+    # global db_time
 
     db_start = time.time()
     with connection.cursor() as cursor:
@@ -169,8 +177,8 @@ def file_collection6(request):
 
 @api_view(['GET'])
 def file_collection7(request):
-    global serializer_time
-    global db_time
+    # global serializer_time
+    # global db_time
 
     db_start = time.time()
     with connection.cursor() as cursor:
