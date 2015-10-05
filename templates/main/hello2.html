@@ -1,0 +1,52 @@
+{% extends "basePdf.html" %}
+
+{# para que funcione el master de abajo se tiene que adicionar easy_pdf en INSTALLED_APPS #}
+{% comment %}
+    fuente: https://github.com/nigma/django-easy-pdf#quickstart            
+{% endcomment %}
+{# {% extends "easy_pdf/base.html" %} #}
+
+{% block extra_style %}
+    <style type="text/css">
+        /*@font-face { font-family: Lato; src: url(fonts/font002.ttf); }*/
+        body {
+            /*font-family: "Lato", "Helvetica", "sans-serif";*/
+            font-family: "monospace", "Helvetica", "sans-serif";
+            /*font-family: Arial, Helvetica, sans-serif;*/
+            /*font-family: "Times New Roman", Times, serif;*/
+            color: blue;
+            font-size: 25px;
+        }
+        table {
+            width: 50px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div id="content">
+        <div class="main">
+            <h1>Hi there!</h1>
+            <img src="/static/img/simple_logo_small.png" />
+            <p></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Respuesta</th>
+                        <th>Votos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in query_results %}
+                        <tr>
+                            <td>{{item.id}}</td>
+                            <td>{{item.choice_text}}</td>
+                            <td>{{item.votes}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>            
+        </div>
+    </div>
+{% endblock %}
