@@ -73,6 +73,20 @@ END;
 $BODY$ language plpgsql
 
 
+-- verificacion de codigo
+DO
+$BODY$
+DECLARE
+    v_count INT = 0;
+    v_dni VARCHAR(50) = '87321050';
+BEGIN
+    select count(id) into v_count from cli
+    where dni = v_dni;
+    RAISE NOTICE 'v_count: %', v_count;
+END;
+$BODY$ language plpgsql
+
+
 
 
 CREATE OR REPLACE FUNCTION json_array_map(json_arr json, path TEXT[]) RETURNS json[]
@@ -334,10 +348,11 @@ FROM (
 {
   "username": "vendedor",
   "cot": {
-    "cli_id": 3,
+    "cli_id": 10,
     "total": 287,
     "rate": 3.2504,
-    "cot_date": "2015-10-08"
+    "cot_date": "2015-10-08",
+    "token": "01359100632047720151008053545"
   },
   "dcot": [
     {
@@ -389,7 +404,7 @@ FROM (
 }
 
 
-{"username":"vendedor","cot":{"cli_id":3,"total":287,"rate":3.2504,"cot_date":"2015-10-08"},"dcot":[{"mar_id":"DEC","acn_id":"Q34","col_id":"MORO","anc":900,"alt":1200,"clr_id":100,"mtr_cost":64,"acc_cost":0,"total":64,"acot":[]},{"mar_id":"DEC","acn_id":"Q40","col_id":"WABO","anc":800,"alt":1000,"clr_id":91,"mtr_cost":86,"acc_cost":0,"total":86,"acot":[]},{"mar_id":"DEC","acn_id":"Q53","col_id":"MORO","anc":700,"alt":1200,"clr_id":91,"mtr_cost":79,"acc_cost":58,"total":137,"acot":[{"acc_id":4,"pri":40},{"acc_id":27,"pri":18}]}]}
+{"username":"vendedor","cot":{"cli_id":3,"total":287,"rate":3.2504,"cot_date":"2015-10-08","token":"01359100632047720151008053545"},"dcot":[{"mar_id":"DEC","acn_id":"Q34","col_id":"MORO","anc":900,"alt":1200,"clr_id":100,"mtr_cost":64,"acc_cost":0,"total":64,"acot":[]},{"mar_id":"DEC","acn_id":"Q40","col_id":"WABO","anc":800,"alt":1000,"clr_id":91,"mtr_cost":86,"acc_cost":0,"total":86,"acot":[]},{"mar_id":"DEC","acn_id":"Q53","col_id":"MORO","anc":700,"alt":1200,"clr_id":91,"mtr_cost":79,"acc_cost":58,"total":137,"acot":[{"acc_id":4,"pri":40},{"acc_id":27,"pri":18}]}]}
 
 */
 
@@ -409,7 +424,7 @@ BEGIN
     RAISE NOTICE 'cli_id: %', cad->'cot'->>'cli_id';
     RAISE NOTICE 'total: %', cad->'cot'->>'total';
     RAISE NOTICE 'rate: %', cad->'cot'->>'rate';
-    RAISE NOTICE 'cod_date: %', cad->'cot'->>'cod_date';    
+    RAISE NOTICE 'cot_date: %', cad->'cot'->>'cot_date';    
     RAISE NOTICE 'dcot: %', cad->'dcot';
     RAISE NOTICE '';
     FOR item IN SELECT * FROM json_array_elements(cad->'dcot')
@@ -440,3 +455,52 @@ BEGIN
     
 END;
 $BODY$ language plpgsql
+
+-- con jsonb
+DO
+$BODY$
+DECLARE
+    v_id int := 0;
+    item jsonb;
+    ditem jsonb;
+    cad jsonb := '{"username":"vendedor","cot":{"cli_id":3,"total":287,"rate":3.2504,"cot_date":"2015-10-08"},"dcot":[{"mar_id":"DEC","acn_id":"Q34","col_id":"MORO","anc":900,"alt":1200,"clr_id":100,"mtr_cost":64,"acc_cost":0,"total":64,"acot":[]},{"mar_id":"DEC","acn_id":"Q40","col_id":"WABO","anc":800,"alt":1000,"clr_id":91,"mtr_cost":86,"acc_cost":0,"total":86,"acot":[]},{"mar_id":"DEC","acn_id":"Q53","col_id":"MORO","anc":700,"alt":1200,"clr_id":91,"mtr_cost":79,"acc_cost":58,"total":137,"acot":[{"acc_id":4,"pri":40},{"acc_id":27,"pri":18}]}]}';
+BEGIN
+    RAISE NOTICE 'username: %', cad->>'username';
+    --RAISE NOTICE 'cot: %', cad->>'cot'; -- obtiene como texto
+    RAISE NOTICE 'cot: %', cad->'cot'; -- obtiene como json
+    RAISE NOTICE 'cli_id: %', cad->'cot'->>'cli_id';
+    RAISE NOTICE 'total: %', cad->'cot'->>'total';
+    RAISE NOTICE 'rate: %', cad->'cot'->>'rate';
+    RAISE NOTICE 'cot_date: %', cad->'cot'->>'cot_date';    
+    RAISE NOTICE 'dcot: %', cad->'dcot';
+    RAISE NOTICE '';
+    FOR item IN SELECT * FROM jsonb_array_elements(cad->'dcot')
+    LOOP
+        RAISE NOTICE '--------------------------';
+        RAISE NOTICE 'mar_id: %', item->>'mar_id';
+        RAISE NOTICE 'acn_id: %', item->>'acn_id';
+        RAISE NOTICE 'col_id: %', item->>'col_id';
+        RAISE NOTICE 'anc: %', item->>'anc';
+        RAISE NOTICE 'alt: %', item->>'alt';
+        RAISE NOTICE 'clr_id: %', item->>'clr_id';
+        RAISE NOTICE 'mtr_cost: %', item->>'mtr_cost';
+        RAISE NOTICE 'acc_cost: %', item->>'acc_cost';
+        RAISE NOTICE 'total: %', item->>'total';
+        RAISE NOTICE 'acot: %', item->'acot';
+        IF (item->'acot') IS NULL OR jsonb_array_length(item->'acot') = 0 THEN
+            RAISE NOTICE 'Sin accesorios';
+        ELSE
+            RAISE NOTICE 'OK';
+            FOR ditem IN SELECT * FROM jsonb_array_elements(item->'acot')
+            LOOP
+                RAISE NOTICE '*****************************';
+                RAISE NOTICE 'acc_id: %', ditem->>'acc_id';
+                RAISE NOTICE 'pri: %', ditem->>'pri';
+            END LOOP;
+        END IF;
+    END LOOP;    
+    
+END;
+$BODY$ language plpgsql
+
+
