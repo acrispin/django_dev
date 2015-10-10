@@ -7,7 +7,7 @@
         }
     });
 
-    function emptyMain() {
+    function emptyView() {
         $("#main").html('');
         $("#main").off(); // para evitar que no se repliquen eventos.
         request_ns.showLoading();
@@ -24,40 +24,29 @@
         $("html, body").scrollTop('0');
     }
 
-    Backbone.View.prototype.close = function () {
-        this.$el.empty().off();
-        this.stopListening();
-        if (this.onClose) {
-            this.onClose();
-        }
-    }
-
-    function AppView() {
-        this.showView = function (view) {
-            if (this.currentView) {
-                this.currentView.close();
-            }
-            this.currentView = view;
-            this.currentView.render();
-            request_ns.hideLoading();
-            $("html, body").scrollTop('0');
-        };        
-    }
-
     function resolveNode(params){
         var arr = [];
         var arr2 = [];
         var dict = {};
         var node = "";
-        var rs = {"node":"","dict":{}};
+        var rs = {"node":"home","dict":{}};
+
         if (typeof params == "string" && params !== "") {
             arr = params.split("?");
             if(arr.length > 1){
-                node = arr[0].split("/")[0];
+                node = arr[0];
                 arr2 = arr[1].split("&");
-                arr2.forEach(function(v,i){
-                    dict[v.split("=")[0]] = v.split("=")[1];
-                });
+                if(arr2.length > 1){
+                    arr2.forEach(function(v,i){
+                        dict[v.split("=")[0]] = v.split("=")[1];
+                    });
+                }
+                else {
+                    arr2 = arr[1].split("/");
+                    arr2.forEach(function(v,i){
+                        dict["p"+(i+1)] = v;
+                    });
+                }
             }
             else {
                 arr = params.split("/");
@@ -76,11 +65,15 @@
     }
 
     // resolveNode();
-    // resolveNode("home?p1=shh&p2=122&p3=test");
-    // resolveNode("home/test/8/78/uys");
-    // resolveNode("home/test/8/78/uys?p1=shh&p2=122&p3=test");
+    // resolveNode("home?p1=valor1&p2=valor2&p3=100&p4=456"); // 
+    // resolveNode("home/valor1/valor2/100/456"); // mismo resultado que la sentencia anterior
+    // resolveNode("home/test/otro?id=29239&nom=NombreValor&code=00192"); // con nombre de parametros
+    // resolveNode("home/test/article?100/298/187"); // 3 parametros
+    // resolveNode("home/test/article?/100/298/187"); // 4 parametros
+    // resolveNode("report/material/stock"); // 2 parametros
+    // resolveNode("report/material/stock?"); // sin parametros y con path compleja, es necesario el ? para que no tome "/material/stock" como parametros
 
-    var mapNodes = {
+    var pathNodes = {
         "home": "views/main/home",
         "article": "views/entities/article",
         "warehouse": "views/entities/warehouse",
@@ -89,21 +82,32 @@
         "pickupOrder": "views/process/pickupOrder",
         "stock": "views/reports/stock",
         "kardex": "views/reports/kardex",
-        "user": "views/security/user"
+        "user": "views/security/user",
+        "report/material/stock": "views/reports/stock"
     };
 
     var initialize = function () {
 
         var app_router = new AppRouter;
-        var app_view = new AppView;
         var rs = {};
        
         // home
-        app_router.on('route:defaultAction', function (params) {
-            rs_node = resolveNode(params);
+        app_router.on('route:defaultAction', function (params) {            
+            // if(arguments[1] !== null){
+            //     params = Array.prototype.join.call(arguments, '?');
+            //     console.log(params);
+            // }
+            rs = resolveNode(location.hash.substr(1));
             try {
-                emptyMain();
-                require([mapNodes[rs.node]], function (GenericView) {
+                emptyView();
+                require([pathNodes[rs.node]], function (GenericView) {
+                    if(typeof GenericView !== "function"){
+                        request_ns.hideLoading();
+                        main_ns.msgError("Error en carga de vista");
+                        main_ns.renderTemplate("#main", "#error_template", []);
+                        throw new Error("Error en cargar vista");
+                        // throw "Error en cargar vista";
+                    }
                     var _view = new GenericView(rs.dict);
                     renderView(_view);
                 }, function (err) {

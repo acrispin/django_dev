@@ -36,6 +36,26 @@
     border-radius: 6px;
 }
 
-body {
-    background-color: #56F3A1;
+@media (min-width: 1300px) {
+  .container {
+    width: 1260px;
+  }
+}
+
+@media (min-width: 1500px) {
+  .container {
+    width: 1400px;
+  }
+}
+
+@media (min-width: 1700px) {
+  .container {
+    width: 1600px;
+  }
+}
+
+@media (min-width: 1900px) {
+  .container {
+    width: 1725px;
+  }
 }

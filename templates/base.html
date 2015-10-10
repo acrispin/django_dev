@@ -21,26 +21,35 @@
     {% block scripthead %}{% endblock %}
 </head>
 <body>     
-    {% block header %}{% endblock %}
+    {% block header %}
+        {% include "partials/header.html" %}
+    {% endblock %}
     <div class="container">
         <div class="container-fluid">
-            <!-- <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div> -->
             <div id="main">
                 {% block content %}{% endblock %}
             </div>
         </div>            
     </div>
-    {% block footer %}{% endblock %}
+    {% block footer %}
+        {% include "partials/footer.html" %}
+    {% endblock %}
 
     {% load customtags %}
+    
+    {% verbatim %}
+    <script id="error_template" type="text/x-handlebars-template"> 
+        <h3 class="align-center">{{lang "errorContent"}}</h3>
+    </script>
+    {% endverbatim %}
 
     <script type="text/javascript">
         var main_globals = {};
-        main_globals.virtualPath = "/";
-        main_globals.galoPath = "/galo/data/";
-        main_globals.flagDevelop = false;
+        main_globals.virtualPath = '{% settings_value "VIRTUALPATH" %}';
+        main_globals.flagDevelop = JSON.parse('{% settings_value "DEBUG" %}'.toLowerCase());
         main_globals.sysVersion = '{% settings_value "SYS_VERSION" %}';
-        main_globals.userFullname = "Usuario";
+        main_globals.username = '{{request.session.username}}';
+        main_globals.userFullname = '{{username}}';
     </script>      
 
     <script src="{% static 'js/libs/jquery-1.11.1-min.js' %}"></script>

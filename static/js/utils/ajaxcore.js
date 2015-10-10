@@ -158,31 +158,6 @@ request_ns.html = function (_url, _data, _type, _success, _error, _before, _comp
 };
 
 
-// request galo
-
-request_ns.get_galo = function (_url, _data, _success, _error, _before, _complete, _cache, _async) {
-    var _dataparsed = JSON.stringify(_data);
-    request_ns.common(main_globals.galoPath + _url, _dataparsed, request_ns.VERB_GET, _success, _error, _before, _complete, "json", request_ns.CONTENT_TYPE_JSON, _cache, _async);
-};
-
-request_ns.post_galo = function (_url, _data, _success, _error, _before, _complete, _cache, _async) {
-    var _dataparsed = JSON.stringify(_data);
-    request_ns.common(main_globals.galoPath + _url, _dataparsed, request_ns.VERB_POST, _success, _error, _before, _complete, "json", request_ns.CONTENT_TYPE_JSON, _cache, _async);
-};
-
-request_ns.put_galo = function (_url, _data, _success, _error, _before, _complete, _cache, _async) {
-    var _dataparsed = JSON.stringify(_data);
-    request_ns.common(main_globals.galoPath + _url, _dataparsed, request_ns.VERB_PUT, _success, _error, _before, _complete, "json", request_ns.CONTENT_TYPE_JSON, _cache, _async);
-};
-
-request_ns.del_galo = function (_url, _data, _success, _error, _before, _complete, _cache, _async) {
-    var _dataparsed = JSON.stringify(_data);
-    request_ns.common(main_globals.galoPath + _url, _dataparsed, request_ns.VERB_DEL, _success, _error, _before, _complete, "json", request_ns.CONTENT_TYPE_JSON, _cache, _async);
-};
-
-// request galo
-
-
 ///////// Global Ajax Events
 function offAjaxGlobalEvents() {
     $(document).off("ajaxSend").off("ajaxComplete");

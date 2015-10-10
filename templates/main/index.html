@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}HomePage{% endblock %}
+
+{% block content %}    
+    <h1>{{username}}</h1>
+{% endblock %}
+
+{% block scriptbody %}
+    <script src="{% static 'js/libs/require-min.js' %}" data-main="{% static 'js/core/main.js' %}"></script>
+{% endblock %}
