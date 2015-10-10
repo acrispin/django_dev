@@ -2,20 +2,10 @@
 
     var AppRouter = Backbone.Router.extend({
         routes: {
-            'article': 'showArticle',
-            'warehouse': 'showWarehouse',
-            'reason': 'showReason',
-            'storageOrder': 'showStorageOrder',
-            'pickupOrder': 'showPickupOrder',
-            'stock': 'showStock',
-            'kardex': 'showKardex',
-            'user': 'showUser',
-            'logout': 'showLogout',
+            'logout': 'runLogout',
             '*actions': 'defaultAction' // default actions debe ir al ultimo siempre
         }
     });
-
-    var hidden = '#bestTours';    
 
     function emptyMain() {
         $("#main").html('');
@@ -54,241 +44,67 @@
         };        
     }
 
+    function resolveNode(params){
+        var arr = [];
+        var arr2 = [];
+        var dict = {};
+        var node = "";
+        var rs = {"node":"","dict":{}};
+        if (typeof params == "string" && params !== "") {
+            arr = params.split("?");
+            if(arr.length > 1){
+                node = arr[0].split("/")[0];
+                arr2 = arr[1].split("&");
+                arr2.forEach(function(v,i){
+                    dict[v.split("=")[0]] = v.split("=")[1];
+                });
+            }
+            else {
+                arr = params.split("/");
+                node = arr.shift();
+                arr.forEach(function(v,i){
+                    dict["p"+(i+1)] = v;
+                });
+            }
+            rs.node = node;
+            rs.dict = dict;
+            return rs;
+        }
+        else {
+            return rs;
+        }
+    }
+
+    // resolveNode();
+    // resolveNode("home?p1=shh&p2=122&p3=test");
+    // resolveNode("home/test/8/78/uys");
+    // resolveNode("home/test/8/78/uys?p1=shh&p2=122&p3=test");
+
+    var mapNodes = {
+        "home": "views/main/home",
+        "article": "views/entities/article",
+        "warehouse": "views/entities/warehouse",
+        "reason": "views/entities/reason",
+        "storageOrder": "views/process/storageOrder",
+        "pickupOrder": "views/process/pickupOrder",
+        "stock": "views/reports/stock",
+        "kardex": "views/reports/kardex",
+        "user": "views/security/user"
+    };
+
     var initialize = function () {
 
         var app_router = new AppRouter;
         var app_view = new AppView;
+        var rs = {};
        
         // home
-        app_router.on('route:defaultAction', function (actions) {
+        app_router.on('route:defaultAction', function (params) {
+            rs_node = resolveNode(params);
             try {
                 emptyMain();
-                require(['views/main/home'], function (HomeView) {
-                    var homeView = new HomeView();
-                    renderView(homeView);
-                }, function (err) {
-                    var failedId = err.requireModules && err.requireModules[0];
-                    console.log(err.requireType);
-                    console.log('modules: ' + err.requireModules);
-                    requirejs.undef(failedId);
-                    request_ns.clearLoading();
-                    if (main_globals.flagDevelop) {
-                        alert(err.requireType + "-" + failedId);
-                    }
-                    main_ns.renderTemplate("#main", "#error_template", []);
-                });
-            } catch (e) {
-                console.log(e);
-                main_ns.msgError("Sucedió un error inesperado.");
-                request_ns.clearLoading();
-                if (main_globals.flagDevelop) {
-                    alert(e);
-                }
-            }
-        });
-
-        // articulos
-        app_router.on('route:showArticle', function () {
-            try {
-                emptyMain();
-                require(['views/entities/article'], function (ArticleView) {
-                    var _view = new ArticleView();
-                    renderView(_view);
-                }, function (err) {
-                    var failedId = err.requireModules && err.requireModules[0];
-                    console.log(err.requireType);
-                    console.log('modules: ' + err.requireModules);
-                    requirejs.undef(failedId);
-                    request_ns.clearLoading();
-                    if (main_globals.flagDevelop) {
-                        alert(err.requireType + "-" + failedId);
-                    }
-                    main_ns.renderTemplate("#main", "#error_template", []);
-                });
-            } catch (e) {
-                console.log(e);
-                main_ns.msgError("Sucedió un error inesperado.");
-                request_ns.clearLoading();
-                if (main_globals.flagDevelop) {
-                    alert(e);
-                }
-            }
-        });
-
-        // almacenes
-        app_router.on('route:showWarehouse', function () {
-            try {
-                emptyMain();
-                require(['views/entities/warehouse'], function (WarehouseView) {
-                    var _view = new WarehouseView();
-                    renderView(_view);
-                }, function (err) {
-                    var failedId = err.requireModules && err.requireModules[0];
-                    console.log(err.requireType);
-                    console.log('modules: ' + err.requireModules);
-                    requirejs.undef(failedId);
-                    request_ns.clearLoading();
-                    if (main_globals.flagDevelop) {
-                        alert(err.requireType + "-" + failedId);
-                    }
-                    main_ns.renderTemplate("#main", "#error_template", []);
-                });
-            } catch (e) {
-                console.log(e);
-                main_ns.msgError("Sucedió un error inesperado.");
-                request_ns.clearLoading();
-                if (main_globals.flagDevelop) {
-                    alert(e);
-                }
-            }
-        });
-
-        // motivos
-        app_router.on('route:showReason', function () {
-            try {
-                emptyMain();
-                require(['views/entities/reason'], function (ReasonView) {
-                    var _view = new ReasonView();
-                    renderView(_view);
-                }, function (err) {
-                    var failedId = err.requireModules && err.requireModules[0];
-                    console.log(err.requireType);
-                    console.log('modules: ' + err.requireModules);
-                    requirejs.undef(failedId);
-                    request_ns.clearLoading();
-                    if (main_globals.flagDevelop) {
-                        alert(err.requireType + "-" + failedId);
-                    }
-                    main_ns.renderTemplate("#main", "#error_template", []);
-                });
-            } catch (e) {
-                console.log(e);
-                main_ns.msgError("Sucedió un error inesperado.");
-                request_ns.clearLoading();
-                if (main_globals.flagDevelop) {
-                    alert(e);
-                }
-            }
-        });
-        
-        // ingresos
-        app_router.on('route:showStorageOrder', function () {
-            try {
-                emptyMain();
-                require(['views/process/storageOrder'], function (StorageOrderView) {
-                    var _view = new StorageOrderView();
-                    renderView(_view);
-                }, function (err) {
-                    var failedId = err.requireModules && err.requireModules[0];
-                    console.log(err.requireType);
-                    console.log('modules: ' + err.requireModules);
-                    requirejs.undef(failedId);
-                    request_ns.clearLoading();
-                    if (main_globals.flagDevelop) {
-                        alert(err.requireType + "-" + failedId);
-                    }
-                    main_ns.renderTemplate("#main", "#error_template", []);
-                });
-            } catch (e) {
-                console.log(e);
-                main_ns.msgError("Sucedió un error inesperado.");
-                request_ns.clearLoading();
-                if (main_globals.flagDevelop) {
-                    alert(e);
-                }
-            }
-        });
-
-        // salidas
-        app_router.on('route:showPickupOrder', function () {
-            try {
-                emptyMain();
-                require(['views/process/pickupOrder'], function (PickupOrderView) {
-                    var _view = new PickupOrderView();
-                    renderView(_view);
-                }, function (err) {
-                    var failedId = err.requireModules && err.requireModules[0];
-                    console.log(err.requireType);
-                    console.log('modules: ' + err.requireModules);
-                    requirejs.undef(failedId);
-                    request_ns.clearLoading();
-                    if (main_globals.flagDevelop) {
-                        alert(err.requireType + "-" + failedId);
-                    }
-                    main_ns.renderTemplate("#main", "#error_template", []);
-                });
-            } catch (e) {
-                console.log(e);
-                main_ns.msgError("Sucedió un error inesperado.");
-                request_ns.clearLoading();
-                if (main_globals.flagDevelop) {
-                    alert(e);
-                }
-            }
-        });
-
-        // stock
-        app_router.on('route:showStock', function () {
-            try {
-                emptyMain();
-                require(['views/reports/stock'], function (StockView) {
-                    var _view = new StockView();
-                    renderView(_view);
-                }, function (err) {
-                    var failedId = err.requireModules && err.requireModules[0];
-                    console.log(err.requireType);
-                    console.log('modules: ' + err.requireModules);
-                    requirejs.undef(failedId);
-                    request_ns.clearLoading();
-                    if (main_globals.flagDevelop) {
-                        alert(err.requireType + "-" + failedId);
-                    }
-                    main_ns.renderTemplate("#main", "#error_template", []);
-                });
-            } catch (e) {
-                console.log(e);
-                main_ns.msgError("Sucedió un error inesperado.");
-                request_ns.clearLoading();
-                if (main_globals.flagDevelop) {
-                    alert(e);
-                }
-            }
-        });
-
-        // kardex
-        app_router.on('route:showKardex', function () {
-            try {
-                emptyMain();
-                require(['views/reports/kardex'], function (KardexView) {
-                    var _view = new KardexView();
-                    renderView(_view);
-                }, function (err) {
-                    var failedId = err.requireModules && err.requireModules[0];
-                    console.log(err.requireType);
-                    console.log('modules: ' + err.requireModules);
-                    requirejs.undef(failedId);
-                    request_ns.clearLoading();
-                    if (main_globals.flagDevelop) {
-                        alert(err.requireType + "-" + failedId);
-                    }
-                    main_ns.renderTemplate("#main", "#error_template", []);
-                });
-            } catch (e) {
-                console.log(e);
-                main_ns.msgError("Sucedió un error inesperado.");
-                request_ns.clearLoading();
-                if (main_globals.flagDevelop) {
-                    alert(e);
-                }
-            }
-        });
-
-        // usuarios
-        app_router.on('route:showUser', function () {
-            try {
-                emptyMain();
-                require(['views/security/user'], function (UserView) {
-                    var _view = new UserView();
+                require([mapNodes[rs.node]], function (GenericView) {
+                    var _view = new GenericView(rs.dict);
                     renderView(_view);
                 }, function (err) {
                     var failedId = err.requireModules && err.requireModules[0];
@@ -312,7 +128,7 @@
         });
 
         // salir de session
-        app_router.on('route:showLogout', function () {
+        app_router.on('route:runLogout', function () {
             try {
                 console.log("implementar salir de session");
             } catch (e) {
