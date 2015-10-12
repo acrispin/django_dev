@@ -547,6 +547,184 @@ http://django-easy-pdf.readthedocs.org/en/latest/api.html#module-easy_pdf.render
 https://groups.google.com/forum/#!topic/django-users/0MUrSRh6fnQ
 
 
+(5)
+si no permite hacer drop a la bd por los conecctiones activas, ejecutar el
+siguiente query:
+    SELECT pg_terminate_backend(pg_stat_activity.pid)
+    FROM pg_stat_activity
+    WHERE pg_stat_activity.datname = 'TARGET_DB'
+      AND pid <> pg_backend_pid();
+luego hacer el drop
+url: http://stackoverflow.com/questions/5408156/how-to-drop-a-postgresql-database-if-there-are-active-connections-to-it
+
+
+(6)
+verificar si python es de 32 bits, en cmd tipear python
+el resultado de la consola muestra, ejm:
+    Python 2.7.1 (r271:86832, Nov 27 2010, 18:30:46) [MSC v.1500 32 bit (Intel)] on win32 ....
+si es 32 bits como el muestra el resultado superior descargar postgresql 9.4 (Win x86-32) en
+http://www.enterprisedb.com/products-services-training/pgdownload#windows
+esto es para evitar conflitos con el psycopg2 que es un driver de postgresql en python
+url: http://stackoverflow.com/questions/12765800/django-error-for-psycopg2-importerror-dll-load-failed/23322291#23322291
+
+
+(7)
+fix instalacion de postgres-9.4 en ubuntu 14.04
+- http://stackoverflow.com/questions/27652545/how-do-i-install-update-to-postgres-9-4
+- http://www.rogerpence.com/2015/01/02/install-postgres-9-4-on-ubuntu/
+    editar o crear el archivo "pgdg.list" en la siguiente ruta: "/etc/apt/sources.list.d/"
+    (http://askubuntu.com/questions/21556/how-to-create-an-empty-file-from-command-line) con el comando "touch" en linea de comandos, ejm: touch newfile.list
+    
+    adicionar la siguiente linea: deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main
+    (http://askubuntu.com/questions/197564/how-do-i-add-a-line-to-my-etc-apt-sources-list) editar el file creado con el comando "gedit", ejm: sudo gedit /etc/apt/newfile.list
+    
+    ejecutar los siguientes comandos en la terminal:
+    ..$ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+    ..$ sudo apt-get update
+    ..$ sudo apt-get install postgresql-9.4
+    ..$ sudo apt-get install pgadmin3
+
+
+(8)
+instalacion de paquetes con la extension .deb
+- http://askubuntu.com/questions/335752/how-to-install-deb-file-in-ubuntu-using-terminal
+ejemplo:
+    ..$ sudo dpkg -i google-chrome-stable_current_i386.deb    
+
+usando "gdebi" para resolver problemas de dependencia: 
+- http://xmodulo.com/how-to-install-deb-file-with-dependencies.html
+    $ sudo apt-get install gdebi-core
+    $ sudo gdebi package_name.deb
+
+usando "gdebi" con app escritorio
+    $ sudo apt-get install gdebi
+    $ sudo gdebi-gtk package_name.deb
+
+instalar ejecutables .sh , ejm descarga de netbeans
+dar permisos
+    $ chmod +x ~/Downloads/netbeans-8.0.2-linux.sh
+
+ir a la carpeta de Downloads y ejecutar
+    $ cd ~/Downloads && ./netbeans-8.0.2-linux.sh (dos comandos a la vez)
+    $ ./netbeans-8.0.2-linux.sh
+
+o si se omite el primer paso de dar permisos
+    $ sudo ./netbeans-8.0.2-linux.sh
+    
+para desintalarlo, ir al directorio de la instalacion y ejecutar
+    $ ./uninstall.sh
+
+instalacion de paquetes con extensio .bin
+- http://askubuntu.com/questions/15093/how-can-i-install-a-bin-file
+ir a la terminal i ejecutar lo siguiente para permisos
+    $ chmod a+x name_of_file.bin
+
+luego ejecutar
+    $ ./name_of_file.bin
+
+o lo siguiente
+    $ sudo ./name_of_file.bin    
+
+
+(10)
+extracion de paquetes con la extension .bz2
+- http://askubuntu.com/questions/25961/how-do-i-install-a-tar-gz-or-tar-bz2-file
+ejemplo:
+    ..$ tar xvzf PACKAGENAME.tar.gz
+    ..$ tar xvjf PACKAGENAME.tar.bz2
+
+(11)
+verificacion del servicio de postgres si esta activo
+    ..$ sudo service --status-all | grep postgres
+    ..$ sudo service postgresql status
+
+(12)
+activacion de super usuario desde la terminal
+    ..$ sudo su
+
+
+(13)
+http://stackoverflow.com/questions/17260338/deploying-flask-with-heroku
+error al deployar en heroku: Web process failed to bind to $PORT within 60 seconds of launch
+se devia a que en heroku se espera la variable PORT, se corrigio adicionando la linea "port = int(os.environ.get('PORT', port))"
+en app.py
+
+
+(14)
+conectarme a postgresql con linea de comandos
+    $ psql -h host -p port -d dbname -U user 
+    $ psql -h localhost -p 5432 -U postgres
+
+
+(15)
+se presento errores al guardar ciertos archivos debido a permisos, ubunto los bloqueaba y no se podian guardar con sublime
+solucion se instalo el paquete "gksu" para ejecutar aplicaciones graficas como super usuario
+    $ sudo apt-get install gksu
+
+y para correr sublime text como su
+    $ gksu subl
+
+con esto ya pude editar y guardar archivos bloqueados por ubuntu
+
+otra forma sin instalar un paquete es ejecutar el siguiente comando (http://askubuntu.com/questions/263450/folders-showing-lock-icon)
+    $ sudo chmod 777 -R path_to_folder_unlock
+    $ sudo chmod 777 -R python/
+
+o para un solo file
+    $ sudo chown anton notes.txt
+
+
+(16)
+-- use curl
+i – show response headers
+H – pass request headers to the resource
+X – pass a HTTP method name
+d – pass in parameters enclosed in quotes; multiple parameters are separated by ‘&’
+
+POSTing data to a REST resource:
+    curl -i -H "Accept: application/json" -X POST -d "firstName=james" http://192.168.0.165/persons/person  
+    curl -d "name=Sagula&phone=3320780" -X POST  http://www.where.com/guest.cgi 
+    curl -H "Content-Type: application/json" -X POST -d '{"username":"xyz","password":"xyz"}' http://localhost:3000/api/login
+
+
+PUT a resource:
+    curl -i -H "Accept: application/json" -X PUT -d "phone=1-800-999-9999" http://192.168.0.165/persons/person/1  
+
+GET a resource: (For GET requests, the -X GET option is optional.)
+    curl -i -H "Accept: application/json" http://192.168.0.165/persons/person/1  
+    curl -i -H "Accept: application/json" http://192.168.0.165/persons?zipcode=93031  
+    curl -i -H "Accept: application/json" "http://192.168.0.165/persons?firstName=james&lastName=wallis"  
+    curl http://127.0.0.1:8000/authors/
+    curl -d "name=Sagula&phone=3320780" http://www.where.com/guest.cgi 
+
+DELETE a resource:
+    curl -i -H "Accept: application/json" -X DELETE http://192.168.0.165/persons/person/1  
+
+Using POST to PUT a resource:
+    curl -i -H "Accept: application/json" -H "X-HTTP-Method-Override: PUT" -X POST -d "phone=1-800-999-9999" http://192.168.0.165/persons/person/1  
+
+Using POST to DELETE a resource:
+    curl -i -H "Accept: application/json" -H "X-HTTP-Method-Override: DELETE" -X POST http://192.168.0.3:8090/persons/person/1 
+
+
+(17)
+Activacion de virtualenv usando shell bash
+http://stackoverflow.com/questions/7369145/activating-a-virtualenv-using-a-shell-script-doesnt-seem-to-work
+http://stackoverflow.com/questions/18960689/ubuntu-says-bash-program-permission-denied
+
+crear el file env_name.sh y poner el siguiente contenido:
+    #!/bin/bash
+    source ~/virtualenvs/env_name/bin/activate
+    cd ~/path/to/env_name #opcional
+
+dar permisos al file creado
+    $ sudo chmod +x env_name.sh
+
+ejecutar el programa env_name
+    $ source env_name.sh
+    o
+    $ . env_name.sh
+
 
 
 PENDIENTES
@@ -561,9 +739,6 @@ https://www.google.com.pe/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=
 http://stackoverflow.com/questions/13603027/django-rest-framework-non-model-serializer
 http://www.django-rest-framework.org/tutorial/quickstart/
 http://notoquesmicodigo.blogspot.com/2014/01/haciendo-una-api-rest-en-20-minutos-con.html
-
-
-
 
 
 
