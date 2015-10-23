@@ -155,6 +155,14 @@ Token.objects.create(user=u)
 
 ## luego al llamar al servicio get_token "views.obtain_auth_token" con las credenciales registradas, se crea el token para el usuario
 
+## cambiar el password a usuario django
+## http://stackoverflow.com/questions/1873806/changing-password-in-django
+entrar al shell
+    >>> from django.contrib.auth.models import User
+    >>> u = User.objects.get(username__exact='username')
+    >>> u.set_password('admin')
+    >>> u.save()
+
 """
 urlsToken = [
     url(r'^get_token/', views.obtain_auth_token, name='token')
