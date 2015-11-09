@@ -54,7 +54,7 @@ class HelloPDFView3(PDFTemplateView):
 
 class HelloPDFView4(PDFTemplateView):
     query_results = Choice.objects.all()
-    template_name = "main/hello2.html"
+    template_name = "main/sample5.html"
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)

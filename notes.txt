@@ -726,6 +726,18 @@ ejecutar el programa env_name
     $ . env_name.sh
 
 
+(18)
+Cadena url para coneccion a bd de postgres en heroku
+    host: ec2-54-204-15-41.compute-1.amazonaws.com
+    port: 5432
+    base: d9bcsiaekikail
+    user: owjtrrcfwjajvz
+    pass: zVewcrjwcRq4IBzVq80HWrDq9G
+
+    postgres://user:pass@host:port/base
+    postgres://owjtrrcfwjajvz:zVewcrjwcRq4IBzVq80HWrDq9G@ec2-54-204-15-41.compute-1.amazonaws.com:5432/d9bcsiaekikail
+
+
 
 PENDIENTES
 http://docs.python-requests.org/en/latest/
