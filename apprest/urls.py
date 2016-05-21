@@ -150,6 +150,8 @@ Token.objects.create(user=u)
     $ python manage.py shell
     >>> from django.contrib.auth.models import User
     >>> user = User.objects.create_user('user001', 'user001@gmail.com', '123456') # username, email, passwd
+    >>> user.first_name = 'first'
+    >>> user.last_name = 'last'
     >>> user.save() # confirmar los cambios
     >>> exit() # salir del shell
 

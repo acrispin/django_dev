@@ -625,6 +625,12 @@ luego ejecutar
 o lo siguiente
     $ sudo ./name_of_file.bin    
 
+eliminacion de programas uninstall http://askubuntu.com/questions/1143/how-can-i-uninstall-software
+    $ sudo apt-get remove <application_name>
+
+o eliminacion completa
+    $ sudo apt-get purge <package-name>
+
 
 (10)
 extracion de paquetes con la extension .bz2
