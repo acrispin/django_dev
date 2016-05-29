@@ -1061,6 +1061,9 @@ http://stackoverflow.com/questions/13281771/no-module-named-django-core-when-cre
 crear un proyecto
 (name_virtual) path_to_folder_project>python F:\VirtualEnv\dkads_env\Scripts\django-admin.py startproject project_name
 
+-- sin la extension .py funciona
+(name_virtual) path_to_folder_project>django-admin startproject project_name
+
 ir al proyecto
 (name_virtual) path_to_folder_project>cd project_name
 
